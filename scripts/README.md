@@ -1,11 +1,22 @@
 # Scripts de Gestão de Workflows n8n
 
-Este diretório contém scripts PowerShell para exportar e importar workflows do n8n usando **CLI nativa** do n8n (mais confiável que API REST).
+Este diretório contém scripts para exportar e importar workflows do n8n usando **CLI nativa** do n8n (mais confiável que API REST).
+
+Disponível para **Windows (PowerShell)** e **Linux/macOS (Bash)**.
 
 ## 🆕 Versões CLI (Recomendadas)
 
-### 📤 `export-workflows-cli.ps1`
-Exporta workflows usando comandos nativos do n8n dentro do container Docker.
+### 📤 Exportação de Workflows
+
+#### Windows PowerShell: `export-workflows-cli.ps1`
+```powershell
+.\export-workflows-cli.ps1
+```
+
+#### Linux/macOS Bash: `export-workflows-cli.sh`
+```bash
+./export-workflows-cli.sh
+```
 
 **Vantagens:**
 - ✅ Sem necessidade de autenticação
@@ -13,67 +24,138 @@ Exporta workflows usando comandos nativos do n8n dentro do container Docker.
 - ✅ Mais rápido e confiável
 - ✅ Formato nativo do n8n
 
-**Uso básico:**
-```powershell
-.\export-workflows-cli.ps1
-```
+**Parâmetros comuns:**
+- `-c/--container`: Nome do container (padrão: docker-n8n-n8n-1)
+- `-o/--output`: Diretório de destino (padrão: ../workflows)
 
-**Parâmetros:**
-- `-ContainerName`: Nome do container (padrão: n8n-worknow-n8n-1)
-- `-OutputDir`: Diretório de destino (padrão: ../workflows)
+### 📥 Importação de Workflows
 
-### 📥 `import-workflows-cli.ps1`
-Importa workflows usando comandos nativos do n8n.
-
-**Uso básico:**
+#### Windows PowerShell: `import-workflows-cli.ps1`
 ```powershell
 .\import-workflows-cli.ps1
 ```
 
-**Parâmetros:**
-- `-ContainerName`: Nome do container (padrão: n8n-worknow-n8n-1)
-- `-InputDir`: Diretório de origem (padrão: ../workflows)
-- `-InputFile`: Arquivo específico para importar
-- `-FromIndividualFiles`: Consolida arquivos individuais para importar
+#### Linux/macOS Bash: `import-workflows-cli.sh`
+```bash
+./import-workflows-cli.sh
+```
+
+**Parâmetros comuns:**
+- `-c/--container`: Nome do container (padrão: docker-n8n-n8n-1)
+- `-i/--input`: Diretório de origem (padrão: ../workflows)
+- `-f/--file`: Arquivo específico para importar
+- `--from-individual`: Consolida arquivos individuais para importar
 
 
 ## 🔧 Versões API REST (Mantidas para compatibilidade)
 
-### 📤 `export-workflows.ps1`
+## 🔧 Versões API REST (Mantidas para compatibilidade)
+
+### 📤 `export-workflows.ps1` (Windows)
 Exporta workflows via API REST (requer autenticação se configurada).
 
-### 📥 `import-workflows.ps1`  
+### 📥 `import-workflows.ps1` (Windows)
 Importa workflows via API REST (requer autenticação se configurada).
 
 ## Como Usar (CLI - Recomendado)
 
 ### 1. Exportar workflows existentes
+
+#### No Windows:
 ```powershell
 cd scripts
 .\export-workflows-cli.ps1
 ```
 
+#### No Linux/macOS:
+```bash
+cd scripts
+./export-workflows-cli.sh
+```
+
 ### 2. Verificar arquivos exportados
-```powershell
+```bash
 ls ../workflows/
 ```
 
 ### 3. Commit no Git
-```powershell
+```bash
 cd ..
 git add workflows/
 git commit -m "feat: adicionar workflows exportados"
 ```
 
 ### 4. Importar em outro ambiente
+
+#### No Windows:
 ```powershell
 # Clonar repositório
 git clone <seu-repo>
-cd n8n-worknow/scripts
+cd docker-n8n/scripts
 
 # Importar workflows
 .\import-workflows-cli.ps1
 ```
+
+#### No Linux/macOS:
+```bash
+# Clonar repositório
+git clone <seu-repo>
+cd docker-n8n/scripts
+
+# Importar workflows
+./import-workflows-cli.sh
+```
+
+## Exemplos de Uso Avançado
+
+### Exportar para diretório específico
+```bash
+# Linux/macOS
+./export-workflows-cli.sh --output /caminho/para/backup
+
+# Windows
+.\export-workflows-cli.ps1 -OutputDir "C:\backup\workflows"
+```
+
+### Importar arquivo específico
+```bash
+# Linux/macOS
+./import-workflows-cli.sh --file ../workflows/all-workflows-2025-10-14_15-23-46.json
+
+# Windows
+.\import-workflows-cli.ps1 -InputFile "..\workflows\all-workflows-2025-10-14_15-23-46.json"
+```
+
+### Importar de arquivos individuais
+```bash
+# Linux/macOS
+./import-workflows-cli.sh --from-individual
+
+# Windows
+.\import-workflows-cli.ps1 -FromIndividualFiles
+```
+
+## Pré-requisitos
+
+### Windows
+- PowerShell 5.1+ ou PowerShell Core 7+
+- Docker Desktop
+
+### Linux/macOS
+- Bash 4.0+
+- Docker
+- `jq` (para processamento de JSON)
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install jq
+  
+  # CentOS/RHEL/Fedora
+  sudo yum install jq  # ou dnf install jq
+  
+  # macOS (Homebrew)
+  brew install jq
+  ```
 
 ## Estrutura dos Arquivos
 
@@ -126,8 +208,25 @@ O arquivo `_export-summary.json` contém:
 
 ### Workflows não importados
 - Verifique se os arquivos JSON são válidos
-- Use `-OverwriteExisting` para atualizar workflows existentes
+- Use `-OverwriteExisting`/`--overwrite` para atualizar workflows existentes
 - Verifique logs de erro no console
+
+### Linux: jq não encontrado
+```bash
+# Ubuntu/Debian
+sudo apt install jq
+
+# CentOS/RHEL/Fedora  
+sudo yum install jq  # ou dnf install jq
+
+# macOS
+brew install jq
+```
+
+### Scripts não executáveis (Linux/macOS)
+```bash
+chmod +x *.sh
+```
 
 ## Automação
 
