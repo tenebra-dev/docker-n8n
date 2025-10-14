@@ -1,0 +1,14 @@
+node_modules
+.git
+.gitignore
+README.md
+*.md
+.env
+.env.local
+.DS_Store
+Thumbs.db
+workflows/
+scripts/
+docker-compose.yml
+.dockerignore
+!pnpm-lock.yaml

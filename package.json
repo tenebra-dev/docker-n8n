@@ -1,0 +1,22 @@
+{
+  "name": "docker-n8n",
+  "version": "1.0.0",
+  "description": "n8n with Docker and custom dependencies",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "axios": "^1.6.0",
+    "date-fns": "^2.30.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4"
+  },
+  "scripts": {
+    "dev": "echo 'Running in Docker'",
+    "check": "node --version && pnpm --version"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

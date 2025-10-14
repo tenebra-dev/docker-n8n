@@ -1,3 +1,5 @@
+version: '3.8'
+
 volumes:
   db_storage:
   n8n_storage:
@@ -22,7 +24,9 @@ services:
       retries: 10
 
   n8n:
-    image: n8n-python
+    build: 
+      context: . 
+      dockerfile: Dockerfile
     restart: always
     environment:
       - DB_TYPE=postgresdb
@@ -32,6 +36,8 @@ services:
       - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
       - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+      - NODE_PATH=/home/node/custom-deps/node_modules
+      - NODE_FUNCTION_ALLOW_EXTERNAL=crypto-js,axios,lodash,date-fns,moment 
     ports:
       - 5678:5678
     links:
