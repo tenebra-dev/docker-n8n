@@ -26,4 +26,26 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO ${POSTGRES_NON_ROOT_USER};
 EOSQL
 
+echo "User and permissions configured!"
+
+# Executar scripts SQL na ordem
+echo "Creating custom schema..."
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" < /docker-entrypoint-initdb.d/sql/01-create-schema.sql
+
+# Conceder permissões no novo schema
+echo "Granting permissions on app_data schema..."
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    GRANT ALL ON SCHEMA app_data TO ${POSTGRES_NON_ROOT_USER};
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA app_data TO ${POSTGRES_NON_ROOT_USER};
+    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA app_data TO ${POSTGRES_NON_ROOT_USER};
+    
+    ALTER DEFAULT PRIVILEGES IN SCHEMA app_data GRANT ALL ON TABLES TO ${POSTGRES_NON_ROOT_USER};
+    ALTER DEFAULT PRIVILEGES IN SCHEMA app_data GRANT ALL ON SEQUENCES TO ${POSTGRES_NON_ROOT_USER};
+    
+    ALTER DATABASE ${POSTGRES_DB} SET search_path TO public, app_data;
+EOSQL
+
+echo "Creating application tables..."
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" < /docker-entrypoint-initdb.d/sql/02-create-tables.sql
+
 echo "Database initialization completed!"
