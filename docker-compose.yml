@@ -38,7 +38,7 @@ services:
       - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
       - NODE_PATH=/home/node/custom-deps/node_modules
-      - NODE_FUNCTION_ALLOW_EXTERNAL=crypto-js,axios,lodash,date-fns,moment 
+      - NODE_FUNCTION_ALLOW_EXTERNAL=crypto-js,axios,lodash,date-fns,moment,cheerio
     ports:
       - 5678:5678
     links:

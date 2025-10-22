@@ -2,7 +2,7 @@
 # Usa comandos nativos do n8n dentro do container Docker
 
 param(
-    [string]$ContainerName = "docker-n8n-n8n-1",
+    [string]$ContainerName = "n8n-worknow-n8n",
     [string]$InputDir = "../workflows",
     [string]$InputFile = "",
     [switch]$FromIndividualFiles = $false
