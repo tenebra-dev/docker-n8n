@@ -140,4 +140,10 @@ As dependências JavaScript são instaladas em `/home/node/custom-deps/node_modu
 - Instalação mais rápida
 - Menor uso de espaço em disco
 - Melhor resolução de dependências
+
 - Lock file para builds reproduzíveis
+
+### Porta pra acessar o n8n
+```powershell
+localhost:5678
+```
