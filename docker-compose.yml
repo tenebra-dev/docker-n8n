@@ -3,6 +3,7 @@ version: '3.8'
 volumes:
   db_storage:
   n8n_storage:
+  redis_storage:
 
 services:
   postgres:
@@ -24,6 +25,18 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_storage:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', '--raw', 'incr', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   n8n:
     build: 
       context: . 
@@ -39,12 +52,51 @@ services:
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
       - NODE_PATH=/home/node/custom-deps/node_modules
       - NODE_FUNCTION_ALLOW_EXTERNAL=crypto-js,axios,lodash,date-fns,moment,cheerio
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - QUEUE_BULL_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - QUEUE_BULL_REDIS_DB=0
     ports:
       - 5678:5678
     links:
       - postgres
+      - redis
     volumes:
       - n8n_storage:/home/node/.n8n
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  n8n-worker:
+    build: 
+      context: . 
+      dockerfile: Dockerfile
+    restart: always
+    command: worker
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+      - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+      - NODE_PATH=/home/node/custom-deps/node_modules
+      - NODE_FUNCTION_ALLOW_EXTERNAL=crypto-js,axios,lodash,date-fns,moment,cheerio
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - QUEUE_BULL_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - QUEUE_BULL_REDIS_DB=0
+    links:
+      - postgres
+      - redis
+    volumes:
+      - n8n_storage:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
