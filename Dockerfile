@@ -1,13 +1,5 @@
 FROM docker.n8n.io/n8nio/n8n
 
-USER root
-
-# Instalar dependências do sistema incluindo npm
-RUN apk add --update python3 py3-pip curl npm
-
-# Instalar pnpm globalmente usando npm
-RUN npm install -g pnpm@8.15.0
-
 USER node
 
 # Criar diretório para as dependências customizadas
