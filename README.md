@@ -13,6 +13,7 @@ Este projeto configura o n8n em **Queue Mode** com PostgreSQL como banco de dado
 - **Encryption Key**: Segurança de credenciais compartilhada entre todos os processos
 - **pnpm**: Gerenciador de pacotes Node.js moderno e eficiente
 - **Dependências Customizadas**: Bibliotecas JavaScript pré-instaladas
+- **Terraform**: Infraestrutura como código para provisionamento automatizado no GCP
 
 ## Estrutura do Projeto
 
@@ -22,11 +23,18 @@ Este projeto configura o n8n em **Queue Mode** com PostgreSQL como banco de dado
 - **pnpm-lock.yaml**: Lock file das dependências
 - **init-data.sh**: Script de inicialização do banco PostgreSQL
 - **.env**: Configurações de ambiente (credenciais, etc.)
+- **terraform/**: Configuração Infrastructure as Code (IaC) para provisionamento no GCP
 
 ## Pré-requisitos
 
+### Para desenvolvimento local:
 - Docker e Docker Compose instalados
 - Arquivo `.env` configurado com suas credenciais
+
+### Para deploy na nuvem (GCP):
+- Conta no Google Cloud Platform
+- gcloud CLI instalado e autenticado
+- Terraform instalado (opcional, mas recomendado)
 
 ## Instalação e Execução
 
@@ -222,7 +230,63 @@ As dependências JavaScript são instaladas em `/home/node/custom-deps/node_modu
 
 ## Deploy para Produção
 
-### Devopness
+### Opção 1: Google Cloud Platform com Terraform (Recomendado) 🚀
+
+Este projeto inclui configuração completa de **Infrastructure as Code** usando Terraform para provisionamento automatizado no GCP.
+
+**Vantagens:**
+- ✅ Infraestrutura versionada como código
+- ✅ Reproduzível e documentada
+- ✅ Free tier disponível (e2-micro)
+- ✅ Fácil de criar e destruir ambientes
+- ✅ Ideal para aprender DevOps/IaC
+
+**Guia completo:** Veja [terraform/README.md](terraform/README.md)
+
+**Início rápido:**
+```powershell
+# 1. Autenticar no GCP
+gcloud auth application-default login
+gcloud config set project SEU_PROJECT_ID
+
+# 2. Navegar para o diretório terraform
+cd terraform
+
+# 3. Inicializar Terraform
+terraform init
+
+# 4. Revisar o que será criado
+terraform plan
+
+# 5. Criar infraestrutura
+terraform apply
+```
+
+O Terraform criará automaticamente:
+- VM no GCP (e2-micro free tier por padrão)
+- Docker e Docker Compose instalados
+- Regras de firewall configuradas
+- IP externo para acesso
+
+Após criação, copie seus arquivos e suba os containers:
+```powershell
+# Copiar arquivos para a VM
+gcloud compute scp --recurse . VM_NAME:~/docker-n8n --zone=ZONE
+
+# Conectar via SSH
+gcloud compute ssh VM_NAME --zone=ZONE
+
+# Na VM, subir containers
+cd ~/docker-n8n
+docker compose up -d
+```
+
+**Custos:**
+- **e2-micro** (us-central1): **FREE** ✅
+- **e2-small**: ~$12/mês (~R$60)
+- **e2-medium**: ~$24/mês (~R$120)
+
+### Opção 2: Devopness
 
 Para fazer deploy no Devopness, use as seguintes configurações:
 

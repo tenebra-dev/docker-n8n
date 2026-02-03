@@ -1,0 +1,53 @@
+# ============================================
+# Terraform Variables - EXEMPLO
+# ============================================
+# INSTRUÇÕES:
+# 1. Copie este arquivo para terraform.tfvars
+# 2. Preencha com seus valores reais
+# 3. NUNCA commite terraform.tfvars no Git!
+
+# Seu projeto GCP (obtenha em: https://console.cloud.google.com/)
+project_id = "seu-projeto-id-aqui"
+
+# Região e Zona (Free Tier disponível em us-west1, us-central1, us-east1)
+region = "us-central1"
+zone   = "us-central1-a"
+
+# Nome da VM (use um nome descritivo)
+instance_name = "n8n-test-vm"
+
+# Tipo de máquina
+# Opções e custos (região US):
+#   - "e2-micro"      → FREE (dentro do free tier)
+#   - "e2-small"      → ~$12/mês (~R$60)
+#   - "e2-medium"     → ~$24/mês (~R$120)
+#   - "e2-standard-2" → ~$48/mês (~R$240)
+machine_type = "e2-micro"
+
+# Tamanho do disco em GB (mínimo 10, máximo 1000)
+boot_disk_size = 30
+
+# Ambiente (development, test, staging, production)
+environment = "test"
+
+# IPs permitidos para acessar a VM (IMPORTANTE PARA SEGURANÇA!)
+# 
+# OPÇÕES:
+# 1. Só seu IP (MAIS SEGURO):
+#    allowed_ip_ranges = ["SEU_IP_AQUI/32"]
+#    Descubra seu IP: (Invoke-WebRequest "https://api.ipify.org").Content
+#
+# 2. Múltiplos IPs:
+#    allowed_ip_ranges = ["IP_CASA/32", "IP_TRABALHO/32"]
+#
+# 3. Qualquer IP (MENOS SEGURO - só para testes públicos):
+#    allowed_ip_ranges = ["0.0.0.0/0"]
+#
+allowed_ip_ranges = ["0.0.0.0/0"]
+
+# ============================================
+# Configurações Avançadas (geralmente não precisa mexer)
+# ============================================
+boot_disk_image = "ubuntu-os-cloud/ubuntu-2204-lts"
+boot_disk_type  = "pd-balanced"
+ssh_user        = "ubuntu"

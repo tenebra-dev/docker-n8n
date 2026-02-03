@@ -1,2 +1,16 @@
+# Environment variables (Docker/n8n)
 .env
+
+# Node modules
 node_modules/
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/*.tfplan
+terraform/terraform.tfvars
+terraform/*_override.tf
+terraform/override.tf
+terraform/crash.log
